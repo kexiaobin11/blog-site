@@ -6,14 +6,14 @@ import Header from './components/Header/index.vue'
 <template>
   <div class="layout">
     <div class="sidebar-container">
-      <Sidebar />
+      <Sidebar/>
     </div>
     <div class="header-container mt-2">
-      <Header />
+      <Header/>
       <div class="mt-4 mr-2">
-        <RouterView />
-       </div>
+        <RouterView/>
       </div>
+    </div>
   </div>
 </template>
 

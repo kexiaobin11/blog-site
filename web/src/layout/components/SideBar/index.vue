@@ -16,6 +16,7 @@
         :key="menu.url"
         :index="menu.url"
         @click="handleMenuClick(menu.url)"
+
       >
         <el-icon>
           <i :class="menu.icon"></i>
@@ -29,6 +30,8 @@
 <script setup>
 import {ref} from 'vue'
 import {menus} from "@/config/menu.config.js";
+import {useRouter} from "vue-router";
+const router = useRouter();
 
 const activePath = ref('/');
 const isCollapse = ref(false);
@@ -36,8 +39,8 @@ const isCollapse = ref(false);
 // 处理菜单点击
 const handleMenuClick = (path) => {
   activePath.value = path;
+  router.push({path});
 };
-
 </script>
 
 <style>
