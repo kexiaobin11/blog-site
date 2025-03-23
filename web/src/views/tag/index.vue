@@ -35,17 +35,10 @@ onMounted(async () => {
     <div class="card mr-4 ml-4">
       <div class="card-body">
         <el-form class="d-flex">
-          <el-input
-            v-model="searchQuery"
-            placeholder="请输入标签名称"
-            @input="searchTags"
-            clearable
-            style="width: 200px"
-          />
+          <el-input v-model="searchQuery" placeholder="请输入标签名称" @input="searchTags" clearable
+                    style="width: 200px"/>
           <el-form-item class="ml-2">
-            <el-button type="primary">
-              <i class="bi bi-search mr-1"></i>搜索
-            </el-button>
+            <el-button type="primary"><i class="bi bi-search mr-1"></i>搜索</el-button>
           </el-form-item>
         </el-form>
         <div class="row mt-2">
