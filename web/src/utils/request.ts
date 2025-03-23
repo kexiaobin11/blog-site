@@ -57,51 +57,31 @@ axios.interceptors.response.use((res: AxiosResponse) => res, (error: any) => {
  */
 
 export default function request(arr: IAxiosData) {
+  console.log(arr.params)
   return new Promise<any>((resolve, reject) => {
     axios({
-      timeout: arr.timeout === undefined ? 10000 : arr.timeout, // 请求超时
+      timeout: arr.timeout ?? 10000,
       url: arr.url,
       method: arr.method || 'POST',
-      header: {
-        'content-type': arr.contentType ? arr.contentType : arr.json ? 'application/json; charset=UTF-8' : 'application/x-www-form-urlencoded; charset=UTF-8'
+      headers: {
+        'Content-Type': arr.contentType ?? (arr.json ? 'application/json; charset=UTF-8' : 'application/x-www-form-urlencoded; charset=UTF-8')
       },
-      params: arr.params || '',
-      data: arr.data || '',
+      params: arr.method === 'GET' ? arr.params : undefined,  // ✅ GET 请求时使用 params
+      data: arr.method !== 'GET' ? arr.data : undefined,  // ✅ POST/PUT 请求时使用 data
       responseType: arr.responseType || 'json'
-    }).then((response: AxiosResponse<any>) => {
-      /**
-       * response格式
-       * {
-       *   data:{},
-       *   status:200,
-       *   statusText:'OK',//从服务器返回的http状态文本
-       *   headers: {},//响应头信息
-       *   config: {} //`config`是在请求的时候的一些配置信息
-       *   }
-       */
-      const responseStatus = `${response.status}`;
-      if (responseStatus.charAt(0) === '2') {
-        if (response.data.code === '1' || response.data.code === 'err_9999') {
-          ElMessage({
-            type: 'error',
-            message: response.data.message
-          })
-          reject(response.data)
-          return
-        }
-        resolve(response.data)
-      } else {
-        ElMessage({
-          type: 'error',
-          message: response.data.message
-        })
-        reject(response.data)
-      }
-    }).catch((err) => {
-      ElMessage({
-        type:'error',
-        message:err.message
-      })
     })
-  })
+      .then((response: AxiosResponse<any>) => {
+        const responseStatus = `${response.status}`;
+        if (responseStatus.startsWith('2')) {  // ✅ 兼容 200~299 的成功状态
+          resolve(response.data);
+        } else {
+          ElMessage.error(response.data.message || '请求失败');
+          reject(response.data);
+        }
+      })
+      .catch((err) => {
+        ElMessage.error(err.message || '请求异常');
+        reject(err);  // ✅ 确保外层 `await` 能收到错误
+      });
+  });
 }

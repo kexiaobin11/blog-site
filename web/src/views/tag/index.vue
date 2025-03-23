@@ -2,19 +2,36 @@
 import {useTagStore} from '@/stores/tag-store.ts';
 import {onMounted, ref} from 'vue';
 import type {Tag} from "@/entity/tag.ts";
+import type {Pagination} from "@/entity/pagination.ts";
+import zhCn from "element-plus/es/locale/lang/zh-cn";
 
-const tags = ref<Tag[]>([]);
+const pageData = ref<Pagination<Tag>>({});
 const tagStore = useTagStore();
 
+const pageSize = ref(5); // 每页条数
+const currentPage = ref(1); // 当前页
+
+const fetchData = async (page = 1, size = 5) => {
+  await tagStore.getPage({page, size});
+  pageData.value = tagStore.pageData;
+};
+const handlePageChange = (page) => {
+  currentPage.value = page;
+  fetchData(page, pageSize.value);
+};
+
+const handleSizeChange = (size) => {
+  pageSize.value = size;
+  fetchData(currentPage.value, size);
+};
+
 onMounted(async () => {
-  await tagStore.getList();
-  tags.value = tagStore.tagList;
-  console.log(tags.value);
+  await fetchData(currentPage.value, pageSize.value);
 });
 </script>
 
 <template>
-  <div v-if="tags">
+  <div v-if="pageData">
     <div class="card mr-4 ml-4">
       <div class="card-body">
         <el-form class="d-flex">
@@ -48,7 +65,7 @@ onMounted(async () => {
           </tr>
           </thead>
           <tbody>
-          <tr v-for="tag in tags" :key="tag.id">
+          <tr v-for="tag in pageData.records" :key="tag.id">
             <td>{{ tag.id }}</td>
             <td>{{ tag.name }}</td>
             <td>{{ tag.description }}</td>
@@ -65,6 +82,19 @@ onMounted(async () => {
           </tr>
           </tbody>
         </table>
+
+        <!-- 分页组件 -->
+        <el-config-provider :locale="zhCn">
+          <el-pagination
+            v-if="pageData.total > 0"
+            :current-page="currentPage"
+            :page-size="pageSize"
+            :total="pageData.total"
+            layout="total, sizes, prev, pager, next, jumper"
+            @current-change="handlePageChange"
+            @size-change="handleSizeChange"
+          />
+        </el-config-provider>
       </div>
     </div>
   </div>
