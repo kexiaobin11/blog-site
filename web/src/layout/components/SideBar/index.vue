@@ -3,7 +3,6 @@
     <div class="logo-container mt-2">
       <span v-show="!isCollapse" class="mr-3">博客管理平台</span>
     </div>
-
     <el-menu
       :default-active="activePath"
       :collapse="isCollapse"
@@ -11,33 +10,17 @@
       text-color="#ffffff"
       active-text-color="#3498db"
     >
-      <!-- 一级菜单 -->
-      <el-menu-item index="1">
+      <!-- 动态渲染菜单 -->
+      <el-menu-item
+        v-for="menu in menus"
+        :key="menu.url"
+        :index="menu.url"
+        @click="handleMenuClick(menu.url)"
+      >
         <el-icon>
-          <User/>
+          <i :class="menu.icon"></i>
         </el-icon>
-        <span>用户中心</span>
-      </el-menu-item>
-
-      <el-menu-item index="2">
-        <el-icon>
-          <el-icon-edit/>
-        </el-icon>
-        <span>标签管理</span>
-      </el-menu-item>
-
-      <el-menu-item index="3">
-        <el-icon>
-          <el-icon-edit/>
-        </el-icon>
-        <span>文章管理</span>
-      </el-menu-item>
-
-      <el-menu-item index="4">
-        <el-icon>
-          <Setting/>
-        </el-icon>
-        <span>系统配置</span>
+        <span>{{ menu.name }}</span>
       </el-menu-item>
     </el-menu>
   </div>
@@ -45,15 +28,16 @@
 
 <script setup>
 import {ref} from 'vue'
-import {Fold, User, Setting} from '@element-plus/icons-vue'
+import {menus} from "@/config/menu.config.js";
 
-const isCollapse = ref(false)
-const activePath = ref('1')
+const activePath = ref('/');
+const isCollapse = ref(false);
 
-const toggleCollapse = () => {
-  isCollapse.value = !isCollapse.value
-  localStorage.setItem('sidebarCollapse', isCollapse.value)
-}
+// 处理菜单点击
+const handleMenuClick = (path) => {
+  activePath.value = path;
+};
+
 </script>
 
 <style>

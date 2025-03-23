@@ -10,7 +10,10 @@ import Header from './components/Header/index.vue'
     </div>
     <div class="header-container mt-2">
       <Header />
-    </div>
+      <div class="mt-4 mr-2">
+        <RouterView />
+       </div>
+      </div>
   </div>
 </template>
 
