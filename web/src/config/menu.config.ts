@@ -23,11 +23,6 @@ export const menus = [
     icon: 'bi bi-tags',
   },
   {
-    name: '用户管理',
-    url: '/user',
-    icon: 'bi bi-person',
-  },
-  {
     name: '个人中心',
     url: '/person-center',
     icon: 'bi bi-person',
