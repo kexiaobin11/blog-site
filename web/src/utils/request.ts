@@ -24,7 +24,7 @@ axios.defaults.headers['X-Requested-With'] = 'XMLHttpRequest';
 // 默认使用 application/json 形式
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
-// 请求拦截器 todo, 后台采用 x-auth-token，此处需要进行修正
+// 请求拦截器
 // axios.interceptors.request.use((config: AxiosRequestConfig) => {
 //   if (sessionStorage.getItem('accessToken')) {
 //     config.headers.Authorization = `Bearer ${sessionStorage.getItem('accessToken')}`
@@ -55,49 +55,33 @@ axios.interceptors.response.use((res: AxiosResponse) => res, (error: any) => {
  * @param {object}  datas  //token在datas中
  *
  */
+
 export default function request(arr: IAxiosData) {
+  console.log(arr.params)
   return new Promise<any>((resolve, reject) => {
     axios({
-      timeout: arr.timeout === undefined ? 10000 : arr.timeout, // 请求超时
+      timeout: arr.timeout ?? 10000,
       url: arr.url,
-      method: arr.type || 'POST', // 默认为 POST
+      method: arr.method || 'POST',
       headers: {
-        'content-type': arr.contentType
-          ? arr.contentType
-          : arr.json
-            ? 'application/json; charset=UTF-8'
-            : 'application/x-www-form-urlencoded; charset=UTF-8',
+        'Content-Type': arr.contentType ?? (arr.json ? 'application/json; charset=UTF-8' : 'application/x-www-form-urlencoded; charset=UTF-8')
       },
-      params: arr.params || {}, // 默认使用空对象
-      data: arr.data || null, // 如果没有数据，默认为 null
-      responseType: arr.responseType || 'json',
+      params: arr.method === 'GET' ? arr.params : undefined,  // ✅ GET 请求时使用 params
+      data: arr.method !== 'GET' ? arr.data : undefined,  // ✅ POST/PUT 请求时使用 data
+      responseType: arr.responseType || 'json'
     })
       .then((response: AxiosResponse<any>) => {
         const responseStatus = `${response.status}`;
-        if (responseStatus.charAt(0) === '2') {
-          if (response.data.code === '1' || response.data.code === 'err_9999') {
-            ElMessage({
-              type: 'error',
-              message: response.data.message,
-            });
-            reject(response.data);
-            return;
-          }
+        if (responseStatus.startsWith('2')) {  // ✅ 兼容 200~299 的成功状态
           resolve(response.data);
         } else {
-          ElMessage({
-            type: 'error',
-            message: response.data.message,
-          });
+          ElMessage.error(response.data.message || '请求失败');
           reject(response.data);
         }
       })
       .catch((err) => {
-        ElMessage({
-          type: 'error',
-          message: err.message,
-        });
-        reject(err); // Reject the promise with error
+        ElMessage.error(err.message || '请求异常');
+        reject(err);  // ✅ 确保外层 `await` 能收到错误
       });
   });
 }
