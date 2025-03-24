@@ -1,7 +1,7 @@
 /**
  * 基于mybatis-plus 分页查询结果
  */
-export interface Pagination<T> {
+export interface Page<T> {
   records: T[];                        // 查询数据列表
   total: number;                        // 查询列表总记录数
   size: number;                         // 每页显示条数，默认 10

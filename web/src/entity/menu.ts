@@ -15,7 +15,7 @@ export interface Menu {
   /**
    * 子菜单
    */
-  children?: YzMenu[];
+  children?: Menu[];
   /**
    * 描述信息
    */

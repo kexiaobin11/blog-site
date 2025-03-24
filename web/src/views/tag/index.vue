@@ -1,32 +1,39 @@
 <script setup lang="ts">
 import {useTagStore} from '@/stores/tag-store.ts';
-import {onMounted, ref} from 'vue';
+import {onMounted, ref, watch, reactive, toRefs} from 'vue';
 import type {Tag} from "@/entity/tag.ts";
-import type {Pagination} from "@/entity/pagination.ts";
-import zhCn from "element-plus/es/locale/lang/zh-cn";
+import type {Page} from "@/entity/page.ts";
+import Pagination from "@/components/Pagination/index.vue";
 
-const pageData = ref<Pagination<Tag>>({});
+/**
+ * 查询参数
+ */
+const data = reactive({
+  params: {
+    page: 1,
+    size: 5
+  }
+});
+const pageData = ref<Page<Tag>>({});
 const tagStore = useTagStore();
+const { params } = toRefs(data);
 
-const pageSize = ref(5); // 每页条数
-const currentPage = ref(1); // 当前页
+watch([() => params.value.page, () => params.value.size], ([newPage, newSize]) => {
+  fetchData(newPage, newSize);
+});
 
+/**
+ * 获取分页数据
+ * @param page 当前页码
+ * @param size 当前每页显示条数
+ */
 const fetchData = async (page = 1, size = 5) => {
   await tagStore.getPage({page, size});
   pageData.value = tagStore.pageData;
 };
-const handlePageChange = (page) => {
-  currentPage.value = page;
-  fetchData(page, pageSize.value);
-};
-
-const handleSizeChange = (size) => {
-  pageSize.value = size;
-  fetchData(currentPage.value, size);
-};
 
 onMounted(async () => {
-  await fetchData(currentPage.value, pageSize.value);
+  await fetchData(params.value.page, params.value.size);
 });
 </script>
 
@@ -77,17 +84,13 @@ onMounted(async () => {
         </table>
 
         <!-- 分页组件 -->
-        <el-config-provider :locale="zhCn">
-          <el-pagination
-            v-if="pageData.total > 0"
-            :current-page="currentPage"
-            :page-size="pageSize"
-            :total="pageData.total"
-            layout="total, sizes, prev, pager, next, jumper"
-            @current-change="handlePageChange"
-            @size-change="handleSizeChange"
-          />
-        </el-config-provider>
+        <Pagination
+          :total="pageData.total"
+          :current-page="params.page"
+          :page-size="params.size"
+          @update:currentPage="params.page = $event"
+          @update:pageSize="params.size = $event"
+        />
       </div>
     </div>
   </div>
