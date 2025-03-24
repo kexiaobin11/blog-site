@@ -10,7 +10,7 @@ const totalData = Mock.mock({
 }).tags;
 
 // Mock 拦截带参数的 GET 请求
-Mock.mock(/\/api\/tag\/page/, 'get', function(options) {
+Mock.mock(/\/api\/tag\/page/, 'get', function (options) {
   const params = new URLSearchParams(options.url.split('?')[1]);
   let current = parseInt(params.get('page')) || 1; // 当前页
   let size = parseInt(params.get('size')) || 10; // 每页大小
@@ -36,4 +36,52 @@ Mock.mock(/\/api\/tag\/page/, 'get', function(options) {
     maxLimit: null, // 单页分页条数限制
     countId: null, // XML 自定义 count 查询的 statementId
   };
+});
+
+/**
+ * 根据 ID 查询标签
+ */
+Mock.mock(/\/api\/tag\/\d+/, 'get', function (options) {
+  const id = parseInt(options.url.match(/\/api\/tag\/(\d+)/)[1]);
+  return totalData.find(item => item.id === id);
+});
+
+/**
+ * 更新标签
+ */
+Mock.mock(/\/api\/tag\/\d+/, 'put', function(options) {
+  const id = parseInt(options.url.match(/\/api\/tag\/(\d+)/)[1]); // 从 URL 提取 ID
+  const body = JSON.parse(options.body); // 获取更新的数据
+
+  // 查找并更新数据
+  const tagIndex = totalData.findIndex(item => item.id === id);
+
+  if (tagIndex !== -1) {
+    // 更新数据
+    totalData[tagIndex] = { ...totalData[tagIndex], ...body };
+
+    // 直接返回更新后的标签
+    return totalData[tagIndex];
+  } else {
+    // 如果未找到标签，则返回空对象
+    return {};
+  }
+});
+
+
+/**
+ * 创建标签
+ */
+Mock.mock('/api/tag', 'post', function(options) {
+  const body = JSON.parse(options.body); // 获取请求的 tag 数据
+  const newTag = {
+    id: totalData.length + 1, // 自动生成新 ID
+    name: body.name,
+    description: body.description
+  };
+
+  totalData.push(newTag); // 将新标签添加到总数据中
+
+  // 直接返回添加后的新标签
+  return newTag;
 });
