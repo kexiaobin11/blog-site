@@ -170,13 +170,13 @@ onMounted(async () => {
   </div>
 
   <!-- 添加和编辑的对话框 -->
-  <el-dialog v-model="dialogVisible" title="添加标签" width="500px">
+  <el-dialog v-model="dialogVisible" title="标签" width="500px">
     <el-form :model="form" :rules="rules" ref="formRef" label-width="80px">
-      <el-form-item label="标签名称" prop="name" class="mt-2">
-        <el-input v-model="form.name" placeholder="请输入标签名称"/>
+      <el-form-item label="名称" prop="name" class="mt-2">
+        <el-input class="mb-1" v-model="form.name" placeholder="请输入标签名称"/>
       </el-form-item>
       <el-form-item label="描述" prop="description" class="mt-4">
-        <el-input v-model="form.description" type="textarea" placeholder="请输入描述"/>
+        <el-input class="mb-1" v-model="form.description" type="textarea" placeholder="请输入描述"/>
       </el-form-item>
     </el-form>
 
