@@ -17,7 +17,7 @@
    ```bash
    git checkout main
    git pull origin main# Git协同开发文档
-
+   ```
 ## 1. Git工作流程概述
 
 为了确保高效的协同开发，团队使用Git进行版本控制。每个开发人员在开始新功能开发时，都会从`main`分支切出一个新的`feature`分支。`feature`分支的命名将基于相关的`issue`号，确保每个功能与其对应的任务（issue）一一对应。
@@ -44,7 +44,7 @@
    ```
 3.	代码开发后查看未暂存的更改：
    ```bash
-    git diff 
+   git diff 
    ```
 4.	提交并推送更新：
    ```bash
@@ -52,3 +52,4 @@
     git commit -m "新功能的描述"
     git push origin <issue号>
    ```
+
