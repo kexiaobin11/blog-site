@@ -8,7 +8,7 @@ import type {Page} from "@/entity/page.ts";
  * tag状态管理
  */
 export const useTagStore = defineStore('tag', () => {
-  const pageData = ref<Page<Tag>>([])
+  const pageData = ref<Page<Tag>>();
 
   /**
    * 保存标签

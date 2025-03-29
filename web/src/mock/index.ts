@@ -3,3 +3,4 @@
  */
 export * from './user-mock.ts';
 export * from './tag-mock.ts';
+export * from './category-mock.ts';

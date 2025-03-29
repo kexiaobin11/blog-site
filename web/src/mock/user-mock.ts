@@ -1,3 +1,4 @@
+// @ts-ignore
 import Mock from 'mockjs';
 
 // 模拟 GET 请求：/api/user
