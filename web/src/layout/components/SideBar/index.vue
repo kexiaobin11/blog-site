@@ -28,7 +28,7 @@
 </template>
 
 <script setup>
-import {ref} from 'vue'
+import {onMounted, ref} from 'vue'
 import {menus} from "@/config/menu.config.js";
 import {useRouter} from "vue-router";
 const router = useRouter();
@@ -41,6 +41,9 @@ const handleMenuClick = (path) => {
   activePath.value = path;
   router.push({path});
 };
+onMounted(()=> {
+  activePath.value = router.currentRoute.value.path;
+});
 </script>
 
 <style>

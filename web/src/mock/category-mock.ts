@@ -3,15 +3,15 @@ import Mock from 'mockjs';
 
 // 持久化数据（全局唯一）
 const totalData = Mock.mock({
-  'tags|50': [{
+  'categories|50': [{
     'id|+1': 1,
     'name': '@word(3,8)',
     'description': '@sentence(5,10)'
   }]
-}).tags;
+}).categories;
 
 // Mock 拦截带参数的 GET 请求
-Mock.mock(/\/api\/tag\/page/, 'get', function (options) {
+Mock.mock(/\/api\/category\/page/, 'get', function (options) {
   const params = new URLSearchParams(options.url.split('?')[1]);
   let current = parseInt(params.get('page')) || 1; // 当前页
   let size = parseInt(params.get('size')) || 10; // 每页大小
@@ -42,7 +42,7 @@ Mock.mock(/\/api\/tag\/page/, 'get', function (options) {
 /**
  * 根据 ID 查询标签
  */
-Mock.mock(/\/api\/tag\/\d+/, 'get', function (options) {
+Mock.mock(/\/api\/category\/\d+/, 'get', function (options) {
   const id = parseInt(options.url.match(/\/api\/tag\/(\d+)/)[1]);
   return totalData.find(item => item.id === id);
 });
@@ -50,7 +50,7 @@ Mock.mock(/\/api\/tag\/\d+/, 'get', function (options) {
 /**
  * 更新标签
  */
-Mock.mock(/\/api\/tag\/\d+/, 'put', function(options) {
+Mock.mock(/\/api\/category\/\d+/, 'put', function(options) {
   const id = parseInt(options.url.match(/\/api\/tag\/(\d+)/)[1]); // 从 URL 提取 ID
   const body = JSON.parse(options.body); // 获取更新的数据
 
@@ -73,7 +73,7 @@ Mock.mock(/\/api\/tag\/\d+/, 'put', function(options) {
 /**
  * 创建标签
  */
-Mock.mock('/api/tag', 'post', function(options) {
+Mock.mock('/api/category', 'post', function(options) {
   const body = JSON.parse(options.body); // 获取请求的 tag 数据
   const newTag = {
     id: totalData.length + 1, // 自动生成新 ID

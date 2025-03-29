@@ -18,6 +18,11 @@ const router = createRouter({
           name: '标签',
           component: () => import('../views/tag/index.vue'),
         },
+        {
+          path: 'category',
+          name: '分类',
+          component: () => import('../views/category/index.vue'),
+        },
       ]
     },
   ],
